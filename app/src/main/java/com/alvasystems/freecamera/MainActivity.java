@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
@@ -23,6 +24,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
     private FreeGLSurfaceView mFreeGLSurfaceView;
     private Button takePicture;
     private CircleImageView previewPhoto;
+    private Point screenMetrics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +64,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
 
     private void initParams() {
         LayoutParams layoutParams = mFreeGLSurfaceView.getLayoutParams();
-        Point screenMetrics = DisplayUtils.getScreenMetrics(this);
+        screenMetrics = DisplayUtils.getScreenMetrics(this);
         layoutParams.width = screenMetrics.x;
         layoutParams.height = screenMetrics.y;
         mFreeGLSurfaceView.setLayoutParams(layoutParams);
@@ -118,6 +120,27 @@ public class MainActivity extends BaseActivity implements View.OnClickListener, 
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
+
+    private float preX = 0;
+    private float currX = 0;
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                preX = event.getX();
+                break;
+            case MotionEvent.ACTION_UP:
+                if (preX > (screenMetrics.x - 30.0)) {
+                    currX = event.getX();
+                    if (preX - currX > 50.0) {
+                        Toast.makeText(this, "ALVASystems", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
+        }
+        return super.onTouchEvent(event);
+    }
 
     private static final int PERMISSION_REQUEST_CODE = 0x0001;
 
